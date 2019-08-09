@@ -65,10 +65,17 @@ resource "aws_iam_role_policy" "lambda_drain_policy" {
 EOF
 }
 
+# https://github.com/hashicorp/terraform/issues/7613
+data "null_data_source" "lambda_path" {
+  inputs {
+    filename = "${substr("${path.module}/lambda.zip", length(path.cwd) + 1, -1)}"
+  }
+}
+
 # Publishing the lambda function
 resource "aws_lambda_function" "drain_lambda_function" {
   count            = "${var.create}"
-  filename         = "${path.module}/lambda.zip"
+  filename         = "${data.null_data_source.lambda_path.outputs.filename}"
   source_code_hash = "${base64sha256(file("${path.module}/lambda.zip"))}"
   function_name    = "${var.name}-lambda-ecs-drain"
   role             = "${aws_iam_role.lambda_ecs_drain_role.arn}"
