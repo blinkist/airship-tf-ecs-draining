@@ -8,7 +8,7 @@ data "aws_iam_policy_document" "lambda_ecs_drain_role" {
 
     principals {
       type        = "Service"
-      identifiers = ["apigateway.amazonaws.com", "lambda.amazonaws.com"]
+      identifiers = ["lambda.amazonaws.com"]
     }
   }
 }
